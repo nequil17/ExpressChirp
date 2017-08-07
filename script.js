@@ -73,11 +73,58 @@ app.route('/chirps/one/:id')
                }
            });   
         });
-   })
+   }) .put(function(req, res) {
+       fs.readFile(jsonPath, 'utf-8', function(err, file) {
+            if (err) {
+                res.statusStatus(500);
+            } else {
+                var arr = JSON.parse(file);
 
-// app.get('chirps/:id', function(req, res) {
+                var response;
 
-// });
+                var id = req.params.id;
+                
+                arr.forEach(function(a) {
+                    if (a.id === id) {
+                        response = a;
+                        response.user = req.body.user;
+                        response.chirp= req.body.chirp;
+                    }
+                });
+            fs.writeFile(jsonPath, JSON.stringify(arr), function(err, success) {
+                if (err) {
+                    res.sendStatus(500);
+                } else {
+                    res.status(201);
+                    res.send(req.body);
+                }
+            });
+        }
+        });
+   }) .get(function(req, res) {
+        fs.readFile(jsonPath, 'utf-8', function(err, fileContents) {
+            if (err) {
+                res.statusStatus(500);
+            } else {
+                
+                var chunks = JSON.parse(fileContents);
+            
+                var id = req.params.id;
+            
+                var response;
 
+                chunks.forEach(function(chunk) {
+                    if (chunk.id === id) {
+                        response = chunk;
+                    }
+                });
+                if (response) {
+                    res.send(response);
+                } else {
+                    res.sendStatus(404);
+                }
+            }
+        });
+    });
 
 app.listen(3000);
